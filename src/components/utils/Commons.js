@@ -41,3 +41,13 @@ export const setTeams = (teams) => {
 export const getTeams = () => {
   return sessionStorage.getItem('teams') || null;
 }
+
+// set the token and user from the session storage
+export const setAwards = (awards) => {
+  sessionStorage.setItem('awards', awards);
+}
+
+// return the token from the session storage
+export const getAwards = () => {
+  return sessionStorage.getItem('awards') || null;
+}

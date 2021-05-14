@@ -1,220 +1,138 @@
-import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Stepper from '@material-ui/core/Stepper';
-import Step from '@material-ui/core/Step';
-import StepLabel from '@material-ui/core/StepLabel';
+import React, { useState } from 'react';
+import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
+import IconButton from '@material-ui/core/IconButton';
+import RemoveIcon from '@material-ui/icons/Remove';
+import AddIcon from '@material-ui/icons/Add';
+import Icon from '@material-ui/core/Icon';
+import { v4 as uuidv4 } from 'uuid';
+import "bootstrap/dist/css/bootstrap.css";
+import { makeStyles } from '@material-ui/core/styles';
+import axios from 'axios';
+import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    width: '100%',
-  },
-  button: {
-    marginRight: theme.spacing(1),
-  },
-  instructions: {
-    marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(1),
-  },
-}));
+const Scoreupdate = () => {
+	const [inputFields, setInputFields] = useState([
+		{ id: uuidv4(), firstName: '', lastName: '' },
+	]);
 
-function getSteps() {
-  return ['Match Details', 'Innings', 'Matter Over!!'];
+	const handleSubmit = (e) => {
+		e.preventDefault();
+		console.log("InputFields", inputFields);
+	};
+
+	const handleChangeInput = (id, event) => {
+		const newInputFields = inputFields.map(i => {
+			if (id === i.id) {
+				i[event.target.name] = event.target.value
+			}
+			return i;
+		})
+
+		setInputFields(newInputFields);
+	}
+
+	const handleAddFields = () => {
+		setInputFields([...inputFields, { id: uuidv4(), firstName: '', lastName: '' }])
+	}
+
+	const handleRemoveFields = id => {
+		const values = [...inputFields];
+		values.splice(values.findIndex(value => value.id === id), 1);
+		setInputFields(values);
+	}
+
+	return (
+		<div>
+			 <div style={{width:'60%', textAlign:'left'}}>
+			<select  value={selectedMatch} onChange={(e) => {setSelectedMatch( e.target.value);}}>
+	        	<option key='0' value='0'>Select Match</option>
+				{array.filter(match => match.team_win !== null).map((match) => <option key={match.match_no} value={match.match_no}>{match.team_a.team_name} Vs {match.team_b.team_name}({match.date})</option>)}
+			</select>
+			&nbsp;&nbsp;<Button size="small" variant="contained" color="primary" onClick={(e) => {loadScorecard(selectedMatch);}}>Show</Button>
+			 
+			<br/>
+			<br/>
+		 </div> 
+			<form style={{ width: '100%' }} onSubmit={handleSubmit}>
+				<div style={{ textAlign: 'left' }}>
+					<TableContainer component={Paper}>
+						<Table aria-label="simple table" size="small">
+							<TableHead>
+								<TableRow>
+									<TableCell align="right"><b>Batsman</b></TableCell>
+									<TableCell align="right"><b>Out By</b></TableCell>
+									<TableCell align="right"><b>Fielder</b></TableCell>
+									<TableCell align="right"><b>Bowler</b></TableCell>
+									<TableCell align="right"><b>4s</b></TableCell>
+									<TableCell align="right"><b>6s</b></TableCell>
+									<TableCell align="right"><b>Balls</b></TableCell>
+									<TableCell align="right"><b>Runs</b></TableCell>
+								</TableRow>
+							</TableHead>
+							<TableBody>
+
+								<TableRow key='1'>
+									<TableCell component="th" scope="row">
+										
+									</TableCell>
+									<TableCell align="right"><Select></TableCell>
+									<TableCell align="right">{(row.fielder == null) ? '' : row.fielder}</TableCell>
+									<TableCell align="right"></TableCell>
+									<TableCell align="right">{row.fours}</TableCell>
+									<TableCell align="right">{row.sixes}</TableCell>
+									<TableCell align="right">{row.balls}</TableCell>
+									<TableCell align="right">{row.runstaken}</TableCell>
+								</TableRow>
+							</TableBody>
+						</Table>
+					</TableContainer>
+					<br />
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<br />
+					<TableContainer component={Paper}>
+						<Table aria-label="simple table" size="small">
+							<TableHead>
+								<TableRow>
+									<TableCell align="right"><b>Bowler</b></TableCell>
+									<TableCell align="right"><b>Overs</b></TableCell>
+									<TableCell align="right"><b>Runs</b></TableCell>
+									<TableCell align="right"><b>Wickets</b></TableCell>
+									<TableCell align="right"><b>Wides</b></TableCell>
+									<TableCell align="right"><b>No Balls</b></TableCell>
+									<TableCell align="right"><b>Byes</b></TableCell>
+								</TableRow>
+							</TableHead>
+							<TableBody>
+
+								<TableRow key={row.bowlerName}>
+									<TableCell component="th" scope="row">{row.bowlerName}</TableCell>
+									<TableCell align="right">{row.overs}</TableCell>
+									<TableCell align="right">{row.runsgiven}</TableCell>
+									<TableCell align="right">{row.wickets}</TableCell>
+									<TableCell align="right">{row.wides}</TableCell>
+									<TableCell align="right">{row.noBalls}</TableCell>
+									<TableCell align="right">{row.byes}</TableCell>
+								</TableRow>
+							</TableBody>
+						</Table>
+					</TableContainer>
+				</div>
+				<Button
+					variant="contained"
+					color="primary"
+					type="submit"
+					onClick={handleSubmit}
+				>Save</Button>
+			</form>
+		</div>
+	);
 }
 
-function getStepContent(step) {
-  switch (step) {
-    case 0:
-      return (<div style={{textAlign:'left'}}>
-		<select //value={selectedMatch}
-            //  onChange={(e) => {setSelectedMatch( e.target.value); loadScorecard(selectedMatch);}}
-			>
-		<option key='0' value='0'>Select Match</option>
-		</select>
-		<br/>
-		<br/>
-		<select //value={selectedMatch}
-            //  onChange={(e) => {setSelectedMatch( e.target.value); loadScorecard(selectedMatch);}}
-			>
-		<option key='0' value='0'>Select Innings</option>
-		
-		</select>
-		<br/>
-		<br/>
-		<select //value={selectedMatch}
-            //  onChange={(e) => {setSelectedMatch( e.target.value); loadScorecard(selectedMatch);}}
-			>
-		<option key='0' value='0'>Select Team</option>
-		
-		</select>
-	 </div> );
-    case 1:
-      return (<div style={{textAlign:'left'}}>
-				<TableContainer component={Paper}>
-		      <Table aria-label="simple table" size="small">
-				 <TableBody>
-		          <TableRow>
-		            <TableCell align="right">
-						<select //value={selectedMatch}
-					            //  onChange={(e) => {setSelectedMatch( e.target.value); loadScorecard(selectedMatch);}}
-								>
-							<option key='0' value='0'>Select batsman</option>
-						</select>
-					</TableCell>
-					<TableCell align="right"></TableCell>
-					<TableCell align="right"></TableCell>
-					<TableCell align="right"></TableCell>
-		            <TableCell align="right">
-						<select //value={selectedMatch}
-					            //  onChange={(e) => {setSelectedMatch( e.target.value); loadScorecard(selectedMatch);}}
-								>
-							<option key='0' value='0'>Select batsman</option>
-						</select>
-					</TableCell>
-		          </TableRow>
-		          <TableRow>
-						<TableCell align="right">4(12)</TableCell>
-						<TableCell align="right"></TableCell>
-						<TableCell align="right"></TableCell>
-						<TableCell align="right"></TableCell>	
-					    <TableCell align="right">0(2)</TableCell>
-					</TableRow>
-		        </TableBody>
-		      </Table>
-    		</TableContainer>
-	
-			</div>);
-    case 2:
-      return (<div style={{textAlign:'left'}}>
-		<select //value={selectedMatch}
-            //  onChange={(e) => {setSelectedMatch( e.target.value); loadScorecard(selectedMatch);}}
-			>
-		<option key='0' value='0'>Match won by</option>
-		</select>
-		<br/>
-		<br/>
-			Congratulations to the Winners!!
-     	 </div> );
-    default:
-      return 'Unknown step';
-  }
-}
-
-export default function HorizontalLinearStepper() {
-  const classes = useStyles();
-  const [activeStep, setActiveStep] = React.useState(0);
-  const [skipped, setSkipped] = React.useState(new Set());
-  const steps = getSteps();
-
-  const isStepOptional = (step) => {
-    return step === 1;
-  };
-
-  const isStepSkipped = (step) => {
-    return skipped.has(step);
-  };
-
-  const handleNext = () => {
-    let newSkipped = skipped;
-    if (isStepSkipped(activeStep)) {
-      newSkipped = new Set(newSkipped.values());
-      newSkipped.delete(activeStep);
-    }
-
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    setSkipped(newSkipped);
-  };
-
-  const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
-  };
-
-  const handleSkip = () => {
-    if (!isStepOptional(activeStep)) {
-      // You probably want to guard against something like this,
-      // it should never occur unless someone's actively trying to break something.
-      throw new Error("You can't skip a step that isn't optional.");
-    }
-
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    setSkipped((prevSkipped) => {
-      const newSkipped = new Set(prevSkipped.values());
-      newSkipped.add(activeStep);
-      return newSkipped;
-    });
-  };
-
-  const handleReset = () => {
-    setActiveStep(0);
-	window.location.pathname='/';
-  };
-
-  return (
-    <div className={classes.root} style={{width:'100%', textAlign:'left'}}>
-      <Stepper activeStep={activeStep}>
-        {steps.map((label, index) => {
-          const stepProps = {};
-          const labelProps = {};
-          if (isStepOptional(index)) {
-            labelProps.optional = <Typography variant="caption">Optional</Typography>;
-          }
-          if (isStepSkipped(index)) {
-            stepProps.completed = false;
-          }
-          return (
-            <Step key={label} {...stepProps}>
-              <StepLabel {...labelProps}>{label}</StepLabel>
-            </Step>
-          );
-        })}
-      </Stepper>
-      <div>
-        {activeStep === steps.length ? (
-          <div>
-            <Typography className={classes.instructions}>
-              All steps completed.
-            </Typography>
-            <Button onClick={handleReset} className={classes.button}>
-              Complete
-            </Button>
-          </div>
-        ) : (
-          <div>
-            {getStepContent(activeStep)}
-            <div>
-              <Button disabled={activeStep === 0} onClick={handleBack} className={classes.button}>
-                Back
-              </Button>
-              {isStepOptional(activeStep) && (
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handleSkip}
-                  className={classes.button}
-                >
-                  Skip
-                </Button>
-              )}
-
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleNext}
-                className={classes.button}
-              >
-                {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
-              </Button>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
+export default Scoreupdate;

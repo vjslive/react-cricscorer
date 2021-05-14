@@ -15,15 +15,20 @@ import Accordion from '@material-ui/core/Accordion';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
+import Button from '@material-ui/core/Button';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
-	hieght: '50%'
+	height: '50%'
   },
   heading: {
     fontSize: theme.typography.pxToRem(15),
     fontWeight: theme.typography.fontWeightRegular,
+  },
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: '40%',
   },
 }));
 
@@ -46,7 +51,7 @@ const Scorecard = () => {
 
 	const loadMatches = () => {
 		if (getMatches.length === 0) {
-		axios.get('http://localhost:8080/showMatches', {
+		axios.get('http://ec2-3-21-106-242.us-east-2.compute.amazonaws.com/showMatches', {
 	  headers: {
 	    // Overwrite Axios's automatically set Content-Type
 	    'Content-Type': 'application/json'
@@ -61,7 +66,7 @@ const Scorecard = () => {
 	const loadScorecard = (matchNo) => {
 		console.log(matchNo);
 		if (matchNo !== null && matchNo !== '0') {
-		axios.get('http://localhost:8080/getScorecard/' + matchNo, {
+		axios.get('http://ec2-3-21-106-242.us-east-2.compute.amazonaws.com/getScorecard/' + matchNo, {
 	  headers: {
 	    'Content-Type': 'application/json'
 	  }
@@ -80,12 +85,13 @@ const Scorecard = () => {
   return (
 	
     <div > 
-	 <div style={{width:'40%', textAlign:'left'}}>
-		<select value={selectedMatch}
-              onChange={(e) => {setSelectedMatch( e.target.value); loadScorecard(selectedMatch);}}>
-		<option key='0' value='0'>Select Match</option>
-        {array.map((match) => <option key={match.match_no} value={match.match_no}>{match.team_a.team_name} Vs {match.team_b.team_name}({match.date})</option>)}
-		</select>
+	 <div style={{width:'60%', textAlign:'left'}}>
+			<select  value={selectedMatch} onChange={(e) => {setSelectedMatch( e.target.value);}}>
+	        	<option key='0' value='0'>Select Match</option>
+				{array.filter(match => match.team_win !== null).map((match) => <option key={match.match_no} value={match.match_no}>{match.team_a.team_name} Vs {match.team_b.team_name}({match.date})</option>)}
+			</select>
+		&nbsp;&nbsp;<Button size="small" variant="contained" color="primary" onClick={(e) => {loadScorecard(selectedMatch);}}>Show</Button>
+		 
 		<br/>
 		<br/>
 	 </div> 
@@ -99,7 +105,7 @@ const Scorecard = () => {
           <Typography className={classes.heading}><b>First Innings</b></Typography>
         </AccordionSummary>
         <AccordionDetails>
-		  <div>
+		  <div style={{width:'100%', textAlign:'left'}}>
           <TableContainer component={Paper}>
 		      <Table aria-label="simple table" size="small">
 		        <TableHead>
@@ -116,7 +122,7 @@ const Scorecard = () => {
 		        </TableHead>
 		        <TableBody>
 				
-		          {firstinningsbatsmen.map((row) => (
+		          {firstinningsbatsmen.sort((a, b) => a.battingorder > b.battingorder ? 1 : -1).map((row) => (
 		            <TableRow key={row.batsman}>
 		              <TableCell component="th" scope="row">{row.batsman}</TableCell>
 		              <TableCell align="right">{row.outBy}</TableCell>
@@ -141,11 +147,9 @@ const Scorecard = () => {
 		        </TableBody>
 		      </Table>
     		</TableContainer>
-			</div>
 			<br/>
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			<br/>
-			<div>
 			<TableContainer component={Paper}>
 		      <Table aria-label="simple table" size="small">
 		        <TableHead>
@@ -187,7 +191,7 @@ const Scorecard = () => {
           <Typography className={classes.heading}><b>Second Innings</b></Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <div>
+          <div style={{width:'100%', textAlign:'left'}}>
           <TableContainer component={Paper}>
 		      <Table aria-label="simple table" size="small">
 		        <TableHead>
@@ -204,7 +208,7 @@ const Scorecard = () => {
 		        </TableHead>
 		        <TableBody>
 				
-		          {secondinningsbatsmen.map((row) => (
+		          {secondinningsbatsmen.sort((a, b) => a.battingorder > b.battingorder ? 1 : -1).map((row) => (
 		            <TableRow key={row.batsman}>
 		              <TableCell component="th" scope="row">{row.batsman}</TableCell>
 		              <TableCell align="right">{row.outBy}</TableCell>
@@ -229,11 +233,9 @@ const Scorecard = () => {
 		        </TableBody>
 		      </Table>
     		</TableContainer>
-			</div>
 			<br/>
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			<br/>
-			<div>
 			<TableContainer component={Paper}>
 		      <Table aria-label="simple table" size="small">
 		        <TableHead>

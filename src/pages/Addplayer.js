@@ -24,7 +24,7 @@ const AddPlayer = () => {
 
 	const loadteams = () => {
 		if (getTeams.length === 0) {
-		axios.get('http://localhost:8080/getTeams', {
+		axios.get('http://ec2-3-21-106-242.us-east-2.compute.amazonaws.com/getTeams', {
 	  headers: {
 	    // Overwrite Axios's automatically set Content-Type
 	    'Content-Type': 'application/json'
@@ -40,7 +40,7 @@ const AddPlayer = () => {
 
 	const loadPlayers = (team) => {
 		if (team !== null && team !== '0') {
-		axios.get('http://localhost:8080/getPlayers/' + team, {
+		axios.get('http://ec2-3-21-106-242.us-east-2.compute.amazonaws.com/getPlayers/' + team, {
 	  headers: {
 	    'Content-Type': 'application/json'
 	  }
@@ -54,7 +54,7 @@ const AddPlayer = () => {
 		console.log('team' + team);
 		if (playerName!== null && team !== null && team !== '0') {
 		const json = JSON.stringify({playerName: playerName, teamNo: team});
-		axios.post('http://localhost:8080/addPlayer', json, {
+		axios.post('http://ec2-3-21-106-242.us-east-2.compute.amazonaws.com/addPlayer', json, {
 	  headers: {
 	    'Content-Type': 'application/json'
 	  }

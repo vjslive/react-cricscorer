@@ -13,7 +13,7 @@ function Login(props) {
     setError(null);
     setLoading(true);
 	const json = JSON.stringify({userName: username.value, password: password.value});
-    axios.post('http://localhost:8080/team/signin', json, {
+    axios.post('http://ec2-3-21-106-242.us-east-2.compute.amazonaws.com/team/signin', json, {
 	  headers: {
 	    // Overwrite Axios's automatically set Content-Type
 	    'Content-Type': 'application/json'

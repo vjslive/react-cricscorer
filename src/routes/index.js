@@ -1,5 +1,5 @@
 import React from "react";
-import { Router, Route, Link } from "react-router-dom";
+import { Router, Route, Link, Switch} from "react-router-dom";
 import createBrowserHistory from "history/createBrowserHistory";
 
 import PropTypes from "prop-types";
@@ -13,13 +13,17 @@ import ListItemText from "@material-ui/core/ListItemText";
 import Home from "../pages/Home";
 import Scoreupdate from "../pages/Scoreupdate";
 import Addplayer from "../pages/Addplayer";
+import NotFound from "../pages/NotFound";
 import Scorecard from "../pages/Scorecard.js";
 import Awards from "../pages/Awards.js";
 import DashboardIcon from "@material-ui/icons/Dashboard";
 import SportsCricketIcon from '@material-ui/icons/SportsCricket';
+import PointsTable from "../pages/PointsTable";
+import FormatListNumberedIcon from '@material-ui/icons/FormatListNumbered';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import DeveloperBoardIcon from '@material-ui/icons/DeveloperBoard';
 import ViewQuiltIcon from '@material-ui/icons/ViewQuilt';
+import StarsIcon from '@material-ui/icons/Stars';
 
 const drawerWidth = 55;
 
@@ -39,7 +43,7 @@ const styles = theme => ({
     flexGrow: 1,
     backgroundColor: theme.palette.background.default,
     padding: theme.spacing.unit * 3,
-    minWidth: 0 // So the Typography noWrap works
+    minWidth: 200 // So the Typography noWrap works
   },
   toolbar: theme.mixins.toolbar
 });
@@ -71,22 +75,7 @@ const Routes = props => {
                 <ListItemText primary="Home" />
 				
               </ListItem>
-              <ListItem button component={Link} to="/scoreupdate">
-                <ListItemIcon>
-				  <Tooltip title="Score Update">
-                  <DeveloperBoardIcon />
-				  </Tooltip>
-                </ListItemIcon>
-                <ListItemText primary="Scoreupdate" />
-              </ListItem>
-              <ListItem button component={Link} to="/addplayer">
-                <ListItemIcon>
-				  <Tooltip title="Add Player">
-                  <PersonAddIcon />
-				  </Tooltip>
-                </ListItemIcon>
-                <ListItemText primary="Addplayer" />
-              </ListItem>
+              
               <ListItem button component={Link} to="/scorecard">
                 <ListItemIcon>
 				  <Tooltip title="Scorecard">
@@ -95,23 +84,45 @@ const Routes = props => {
                 </ListItemIcon>
                 <ListItemText primary="Scorecard" />
               </ListItem>
+
+			  <ListItem button component={Link} to="/pointstable">
+                <ListItemIcon>
+				  <Tooltip title="PointsTable">
+                  <FormatListNumberedIcon />
+				  </Tooltip>
+                </ListItemIcon>
+                <ListItemText primary="Points Table" />
+              </ListItem>
 			  <ListItem button component={Link} to="/awards">
                 <ListItemIcon>
 				  <Tooltip title="Awards">
-                  <ViewQuiltIcon />
+                  <StarsIcon />
 				  </Tooltip>
                 </ListItemIcon>
                 <ListItemText primary="Awards" />
+              </ListItem>
+			  <ListItem button component={Link} to="/scoreupdate">
+                <ListItemIcon>
+				  <Tooltip title="Score Update">
+                  <DeveloperBoardIcon />
+				  </Tooltip>
+                </ListItemIcon>
+                <ListItemText primary="Scoreupdate" />
               </ListItem>
             </List>
           </Drawer>
           <main className={classes.content}>
             {/* <div className={classes.toolbar} /> */}
+			<Switch>
             <Route exact path="/" component={Home} />
             <Route path="/scorecard" component={Scorecard} />
-            <Route path="/Awards" component={Awards} />
+			<Route path="/pointstable" component={PointsTable} />
+            <Route path="/awards" component={Awards} />
             <Route path="/scoreupdate" component={Scoreupdate} />
             <Route path="/addplayer" component={Addplayer} />
+			<Route path="/error" component={NotFound} />
+			<Route component={NotFound} />
+			</Switch>
           </main>
         </div>
       </Router>

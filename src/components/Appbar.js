@@ -37,7 +37,7 @@ const routeChange = () => {
       <AppBar position="static">
         <Toolbar>
           <Typography variant="title" color="inherit" className={classes.flex}>
-            REAR League
+           <h1> REAR League </h1>
           </Typography>
         </Toolbar>
       </AppBar>

@@ -26,16 +26,17 @@ const FlatButtons = props => {
   const countRef = useRef(0);
   // handle click event of logout button
    useEffect(() => {
-    loadMatches()}, [countRef]);
+    loadMatchesAndPts()}, [countRef]);
 
-	const loadMatches = () => {
+	const loadMatchesAndPts = () => {
 		
 		if (getMatches.length === 0) {
-		axios.get('http://localhost:8080/showMatches', {
+		axios.get('http://ec2-3-21-106-242.us-east-2.compute.amazonaws.com/showMatches', {
 	  headers: {
 	    // Overwrite Axios's automatically set Content-Type
 	    'Content-Type': 'application/json'
 	  }
+
 	}).then(response => {
 	console.log(response);
 	console.log(response.data);
@@ -43,6 +44,7 @@ const FlatButtons = props => {
 	setMatches(response.data);
     })
 	countRef.current++;}
+	
    };
 	
 
@@ -64,7 +66,7 @@ const FlatButtons = props => {
         </TableHead>
         <TableBody>
 		
-          {array.map((row) => (
+          {array.sort((a, b) => a.match_no > b.match_no ? 1 : -1).map((row) => (
             <TableRow key={row.match_no}>
               <TableCell component="th" scope="row">{row.match_no}</TableCell>
               <TableCell align="right">{row.venue}</TableCell>
